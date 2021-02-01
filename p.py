@@ -56,6 +56,11 @@ def csv_to_dict():
 		with open(file, newline='') as fo:
 			reader = csv.reader(fo)
 			data = list(reader)
+			for rows in data:
+				l=[]
+				for x in rows:
+					l.append(x.replace('"',""))
+				rows=l
 			table_data[filename]=data
 	#print(table_data['table1'][0])
 	#print(table_data['table2'])
@@ -129,10 +134,12 @@ for i in list1:
 list=a.split(" ")
 list[-1]=(list[-1])[:-1]
 
-#print(list)
+#print(list1)
 
-index_of_from = list.index('FROM')
-i=capital(list,index_of_from)
+index_of_from = list1.index('FROM')
+from_data=list1[index_of_from+1].split(",")
+"""
+i=capital(list1,index_of_from)
 #print(i)
 if(index_of_from+1<i and i<len(list)-1):
 	from1_data=list[index_of_from+1:i]
@@ -144,8 +151,7 @@ else:
 	from1_data=list[i].split(",")
 
 from_data=(' '.join(from1_data)).split(",")
-
-#print(from_data)
+"""
 #print(table_structure)
 final_col_names=[]
 from_final_data=[]
@@ -164,8 +170,11 @@ try:
 except:
 	print("Enter correct table/column name")
 
+
 #print("final col names:")
 #print(final_col_names)
+
+
 #print(from_final_data)
 try:
 	index_of_where = list.index('WHERE')
@@ -585,10 +594,10 @@ try:
 					j=j+1
 				else:
 					from_final_data.pop(j)
-	"""		
-	print("---------------after where ----------")
-	print(from_final_data)
-	"""
+		
+	#print("---------------after where ----------")
+	#print(from_final_data)
+	
 except:
 	pass
 
@@ -670,9 +679,10 @@ if(select_data=="DISTINCT"):
 	select_data = str(list1[2])
 
 select_data=select_data.split(",")
+
 """
 for i in select_data:
-	print(i,end=" ")
+	print(i.lower(),end=" ")
 """
 length=len(select_data)
 i=0
@@ -680,534 +690,538 @@ i=0
 if(flag_groupby!=1 and select_data[0]=="*" and str(list1[1])!="DISTINCT" ):
 	select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
 	for qq in final_col_names:
-		print(qq,end=" ")
+		print(qq.lower(),end=" ")
 	print()
 	for x in from_final_data:
 		for y in x:
-			print(y,end=" ")
+			print(y.lower(),end=" ")
 		print()
 if(flag_groupby!=1 and select_data[0]=="*" and str(list1[1])=="DISTINCT" ):
 	select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
 	for qq in final_col_names:
-		print(qq,end=" ")
+		print(qq.lower(),end=" ")
 	print()
 	L=[]
 	for x in from_final_data:
 		if x not in L:
 			L.append(x)
 			for y in x:
-				print(y,end=" ")
+				print(y.lower(),end=" ")
 			print()
 
-#try:
-if(flag_groupby!=1 and str(list1[1])!="DISTINCT" and (select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))):
-	
-	try:
+try:
+	if(flag_groupby!=1 and str(list1[1])!="DISTINCT" and (select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))):
 		
-		for i in range(length):
+		try:
 			
-			select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
-			
-			if(select_data[i].startswith("max") and flag_groupby!=1):
-				i1=str(select_data[i]).index("(")
-				i2=str(select_data[i]).index(")")
-				column_name=str(select_data[i])[i1+1:i2]
-				column_index=final_col_names.index(column_name)
-				max=0
-				for row in from_final_data:
-					if(int(row[column_index])>max):
-						max=int(row[column_index])
-				print(select_data[i])
-				print(max)
-
-			elif(select_data[i].startswith("min") and flag_groupby!=1):
-				i1=str(select_data[i]).index("(")
-				i2=str(select_data[i]).index(")")
-				column_name=str(select_data[i])[i1+1:i2]
-				column_index=final_col_names.index(column_name)
-				min=0
-				for row in from_final_data:
-					if(int(row[column_index])<min):
-						min=int(row[column_index])
-				print(select_data[i])
-				print(min)
-		
-			elif(select_data[i].startswith("count") and flag_groupby!=1):	
-				i1=str(select_data[i]).index("(")
-				i2=str(select_data[i]).index(")")
-				column_name=str(select_data[i])[i1+1:i2]
-				if(column_name!="*"):
-					count = 0
+			for i in range(length):
+				
+				select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
+				
+				if(select_data[i].startswith("max") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					max=0
 					for row in from_final_data:
+						if(int(row[column_index])>max):
+							max=int(row[column_index])
+					print(select_data[i].lower())
+					print(max)
+
+				elif(select_data[i].startswith("min") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					min=0
+					for row in from_final_data:
+						if(int(row[column_index])<min):
+							min=int(row[column_index])
+					print(select_data[i].lower())
+					print(min)
+			
+				elif(select_data[i].startswith("count") and flag_groupby!=1):	
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					if(column_name!="*"):
+						count = 0
+						for row in from_final_data:
+								count+=1
+						print(select_data[i].lower())
+						print(count)
+					else:
+						count=0
+						for row in from_final_data:
 							count+=1
-					print(select_data[i])
-					print(count)
-				else:
+						print(select_data[i].lower())
+						print(count.lower())
+				elif(select_data[i].startswith("avg") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					sum=0
 					count=0
 					for row in from_final_data:
+						sum+=int(row[column_index])
 						count+=1
-					print(select_data[i])
-					print(count)
-			elif(select_data[i].startswith("avg") and flag_groupby!=1):
-				i1=str(select_data[i]).index("(")
-				i2=str(select_data[i]).index(")")
-				column_name=str(select_data[i])[i1+1:i2]
-				column_index=final_col_names.index(column_name)
-				sum=0
-				count=0
-				for row in from_final_data:
-					sum+=int(row[column_index])
-					count+=1
-				print(select_data[i])
-				if(count==0):
-					print("Count=0, so no avg")
-				else:
-					print(float(sum)/float(count))
+					print(select_data[i].lower())
+					if(count==0):
+						print("Count=0, so no avg")
+					else:
+						print(float(sum)/float(count))
+				
+				elif(select_data[i].startswith("sum") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					sum=0
+					for row in from_final_data:
+						sum+=int(row[column_index])
+					print(select_data[i].lower())
+					print(sum)
+				else :
+					print("Invalid Query with aggregate functions")
+
+		except:
+			print("Invalid Query with aggregate functions")
+
+	elif(flag_groupby!=1 and str(list1[1])=="DISTINCT" and (select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))):
+		try:
+			for xx in select_data:
+				print(xx.lower(),end=" ")
+			xx=[]
+			for i in range(length):
+				select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
+
+				if(select_data[i].startswith("max") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					max=0
+					for row in from_final_data:
+						if(int(row[column_index])>max):
+							max=int(row[column_index])
+					xx.append(max)
+
+				elif(select_data[i].startswith("min") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					min=0
+					for row in from_final_data:
+						if(int(row[column_index])<min):
+							min=int(row[column_index])
+					xx.append(min)
 			
-			elif(select_data[i].startswith("sum") and flag_groupby!=1):
-				i1=str(select_data[i]).index("(")
-				i2=str(select_data[i]).index(")")
-				column_name=str(select_data[i])[i1+1:i2]
-				column_index=final_col_names.index(column_name)
-				sum=0
-				for row in from_final_data:
-					sum+=int(row[column_index])
-				print(select_data[i])
-				print(sum)
-			else :
+				elif(select_data[i].startswith("count") and flag_groupby!=1):	
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					if(column_name!="*"):
+						count = 0
+						for row in from_final_data:
+								count+=1
+						xx.append(count)
+					else:
+						count=0
+						for row in from_final_data:
+							count+=1
+						xx.append(count)
+				elif(select_data[i].startswith("avg") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					sum=0
+					count=0
+					for row in from_final_data:
+						sum+=int(row[column_index])
+						count+=1
+					if(count==0):
+						xx.append("undefined")
+
+					else:
+						xx.append(float(sum)/float(count))
+				
+				elif(select_data[i].startswith("sum") and flag_groupby!=1):
+					i1=str(select_data[i]).index("(")
+					i2=str(select_data[i]).index(")")
+					column_name=str(select_data[i])[i1+1:i2]
+					column_index=final_col_names.index(column_name)
+					sum=0
+					for row in from_final_data:
+						sum+=int(row[column_index])
+					xx.append(sum)
+				else :
+					print("Invalid Query with aggregate functions")
+			print()
+			for x in xx:
+				print(str(x).lower(),end=" ")
+			print()
+		except:
 				print("Invalid Query with aggregate functions")
 
-	except:
-		print("Invalid Query with aggregate functions")
-
-elif(flag_groupby!=1 and str(list1[1])=="DISTINCT" and (select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))):
-	#try:
-	for xx in select_data:
-		print(xx,end=" ")
-	xx=[]
-	for i in range(length):
-		select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
-
-		if(select_data[i].startswith("max") and flag_groupby!=1):
-			i1=str(select_data[i]).index("(")
-			i2=str(select_data[i]).index(")")
-			column_name=str(select_data[i])[i1+1:i2]
-			column_index=final_col_names.index(column_name)
-			max=0
+	elif(flag_groupby!=1 and str(list1[1])!="DISTINCT" and not(select_data[0]=="*" or select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))):
+		try:
+			col_index=[]
+			for i in range(length):
+				select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
+				col_index.append(final_col_names.index(select_data[i]))
 			for row in from_final_data:
-				if(int(row[column_index])>max):
-					max=int(row[column_index])
-			xx.append(max)
+				for i in col_index:
+					print(str(row[i]).lower(),end=" ") 
+				print()
+		except:
+			print("invalid query")
 
-		elif(select_data[i].startswith("min") and flag_groupby!=1):
-			i1=str(select_data[i]).index("(")
-			i2=str(select_data[i]).index(")")
-			column_name=str(select_data[i])[i1+1:i2]
-			column_index=final_col_names.index(column_name)
-			min=0
-			for row in from_final_data:
-				if(int(row[column_index])<min):
-					min=int(row[column_index])
-			xx.append(min)
-	
-		elif(select_data[i].startswith("count") and flag_groupby!=1):	
-			i1=str(select_data[i]).index("(")
-			i2=str(select_data[i]).index(")")
-			column_name=str(select_data[i])[i1+1:i2]
-			if(column_name!="*"):
-				count = 0
-				for row in from_final_data:
-						count+=1
-				xx.append(count)
-			else:
-				count=0
-				for row in from_final_data:
-					count+=1
-				xx.append(count)
-		elif(select_data[i].startswith("avg") and flag_groupby!=1):
-			i1=str(select_data[i]).index("(")
-			i2=str(select_data[i]).index(")")
-			column_name=str(select_data[i])[i1+1:i2]
-			column_index=final_col_names.index(column_name)
-			sum=0
-			count=0
-			for row in from_final_data:
-				sum+=int(row[column_index])
-				count+=1
-			if(count==0):
-				xx.append("undefined")
-
-			else:
-				xx.append(float(sum)/float(count))
-		
-		elif(select_data[i].startswith("sum") and flag_groupby!=1):
-			i1=str(select_data[i]).index("(")
-			i2=str(select_data[i]).index(")")
-			column_name=str(select_data[i])[i1+1:i2]
-			column_index=final_col_names.index(column_name)
-			sum=0
-			for row in from_final_data:
-				sum+=int(row[column_index])
-			xx.append(sum)
-		else :
-			print("Invalid Query with aggregate functions")
-	print()
-	for x in xx:
-		print(x,end=" ")
-	print()
-#		except:
-#			print("Invalid Query with aggregate functions")
-
-elif(flag_groupby!=1 and str(list1[1])!="DISTINCT" and not(select_data[0]=="*" or select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))):
-	try:
-		col_index=[]
-		for i in range(length):
-			select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
-			col_index.append(final_col_names.index(select_data[i]))
-		for row in from_final_data:
-			for i in col_index:
-				print(row[i],end=" ") 
+	elif(flag_groupby!=1 and str(list1[1])=="DISTINCT" and not(select_data[0]=="*" or select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))): 
+		try:
+			col_index=[]
+			for i in range(length):
+				select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
+				col_index.append(final_col_names.index(select_data[i]))
+			newList = [[each_list[i] for i in col_index] for each_list in from_final_data]
+			#print(newList)
+			from_final_data=[]
+			for i in newList:
+				if(i not in from_final_data):
+					from_final_data.append(i)
+			for qq in select_data:
+				print(qq.lower(),end=" ")
 			print()
-	except:
-		print("invalid query")
+			for x in from_final_data:
+				for y in x:
+					print(str(y).lower(),end=" ")
+				print()
+		except:
+			print("Invalid Query")
 
-elif(flag_groupby!=1 and str(list1[1])=="DISTINCT" and not(select_data[0]=="*" or select_data[0].startswith("count") or select_data[0].startswith("max") or select_data[0].startswith("min") or select_data[0].startswith("sum") or select_data[0].startswith("avg"))): 
-	try:
-		col_index=[]
+
+	elif(flag_groupby==1 and str(list1[1])!="DISTINCT"):
+
 		for i in range(length):
 			select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
-			col_index.append(final_col_names.index(select_data[i]))
-		newList = [[each_list[i] for i in col_index] for each_list in from_final_data]
-		#print(newList)
-		from_final_data=[]
-		for i in newList:
-			if(i not in from_final_data):
-				from_final_data.append(i)
-		for qq in select_data:
-			print(qq,end=" ")
+		for i in select_data:
+			print(i.lower(),end=" ")
 		print()
-		for x in from_final_data:
-			for y in x:
-				print(y,end=" ")
-			print()
-	except:
-		print("Invalid Query")
+		if group_data in select_data:
+			if(len(select_data)==1):
+				print(str(select_data[0]).lower())
+				for i in d.keys():
+					print(str(i).lower())
+			else:
+				for row in d.keys():
+					for i in select_data:
+						if(i==group_data):
+							print(str(row).lower(),end=" ")
 
+						elif(i.startswith("sum")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							sum=0
+							for l in d[row]:
+								sum+=int(l[column_index])
+							print(sum,end=" ")
 
-elif(flag_groupby==1 and str(list1[1])!="DISTINCT"):
+						elif(i.startswith("avg")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							sum=0
+							count=0
+							for l in d[row]:
+								sum+=int(l[column_index])
+								count+=1
+							if(count!=0):
+								print(float(sum)/float(count),end=" ")	
 
-	for i in range(length):
-		select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
-	for i in select_data:
-		print(i,end=" ")
-	print()
-	if group_data in select_data:
-		if(len(select_data)==1):
-			print(select_data[0])
-			for i in d.keys():
-				print(i)
+						elif(i.startswith("min")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							min=0
+							for l in d[row]:
+								if(min>int(l[column_index])):
+									min=int(l[column_index])
+							print(min,end=" ")	
+
+						elif(i.startswith("max")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							max=0
+							for l in d[row]:
+								if(max<int(l[column_index])):
+									max=int(l[column_index])
+							print(max,end=" ")	
+
+						elif(i.startswith("count")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							count=0
+							if(column_name=="*"):
+								for l in d[row]:
+									count+=1
+							else:
+								column_index=final_col_names.index(column_name)
+								for l in d[row]:
+									count+=1
+							print(count,end=" ")	
+						else:
+							print("invalid query")
+					print()	
 		else:
 			for row in d.keys():
-				for i in select_data:
-					if(i==group_data):
-						print(row,end=" ")
+					for i in select_data:
 
-					elif(i.startswith("sum")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-						print(sum,end=" ")
-
-					elif(i.startswith("avg")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						count=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-							count+=1
-						if(count!=0):
-							print(float(sum)/float(count),end=" ")	
-
-					elif(i.startswith("min")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						min=0
-						for l in d[row]:
-							if(min>int(l[column_index])):
-								min=int(l[column_index])
-						print(min,end=" ")	
-
-					elif(i.startswith("max")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						max=0
-						for l in d[row]:
-							if(max<int(l[column_index])):
-								max=int(l[column_index])
-						print(max,end=" ")	
-
-					elif(i.startswith("count")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						count=0
-						if(column_name=="*"):
-							for l in d[row]:
-								count+=1
-						else:
+						if(i.startswith("sum")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
 							column_index=final_col_names.index(column_name)
+							sum=0
 							for l in d[row]:
-								count+=1
-						print(count,end=" ")	
-					else:
-						print("invalid query")
-				print()	
-	else:
-		for row in d.keys():
-				for i in select_data:
+								sum+=int(l[column_index])
+							print()
+							print(sum,end=" ")
 
-					if(i.startswith("sum")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-						print()
-						print(sum,end=" ")
-
-					elif(i.startswith("avg")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						count=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-							count+=1
-						if(count!=0):
-							print(float(sum)/float(count),end=" ")	
-
-					elif(i.startswith("min")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						min=0
-						for l in d[row]:
-							if(min>int(l[column_index])):
-								min=int(l[column_index])
-						print(min,end=" ")	
-
-					elif(i.startswith("max")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						max=0
-						for l in d[row]:
-							if(max<int(l[column_index])):
-								max=int(l[column_index])
-						print(max,end=" ")	
-
-					elif(i.startswith("count")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						count=0
-						if(column_name=="*"):
-							for l in d[row]:
-								count+=1
-						else:
+						elif(i.startswith("avg")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
 							column_index=final_col_names.index(column_name)
+							sum=0
+							count=0
 							for l in d[row]:
+								sum+=int(l[column_index])
 								count+=1
-						print(count,end=" ")	
-					else:
-						print("Invalid query")
+							if(count!=0):
+								print(float(sum)/float(count),end=" ")	
+
+						elif(i.startswith("min")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							min=0
+							for l in d[row]:
+								if(min>int(l[column_index])):
+									min=int(l[column_index])
+							print(min,end=" ")	
+
+						elif(i.startswith("max")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							max=0
+							for l in d[row]:
+								if(max<int(l[column_index])):
+									max=int(l[column_index])
+							print(max,end=" ")	
+
+						elif(i.startswith("count")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							count=0
+							if(column_name=="*"):
+								for l in d[row]:
+									count+=1
+							else:
+								column_index=final_col_names.index(column_name)
+								for l in d[row]:
+									count+=1
+							print(count,end=" ")	
+						else:
+							print("Invalid query")
 
 
-elif(flag_groupby==1 and str(list1[1])=="DISTINCT"):
-	for i in range(length):
-		select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
-	if group_data in select_data:
-		if(len(select_data)==1):
-			print(select_data[0])
-			qqq=[]
-			for i in d.keys():
-				if i not in qqq:
-					print(i)
-					qqq.append(i)
+	elif(flag_groupby==1 and str(list1[1])=="DISTINCT"):
+		for i in range(length):
+			select_data[i]=select_data[i].rstrip(" ").lstrip(" ")
+		if group_data in select_data:
+			if(len(select_data)==1):
+				print(str(select_data[0]).lower())
+				qqq=[]
+				for i in d.keys():
+					if i not in qqq:
+						print(str(i).lower())
+						qqq.append(i)
+			else:
+				for row in select_data:
+					print(str(row).lower(), end=" ")
+				print()
+				QQ1=[]
+				for row in d.keys():
+					sublist=[]
+					for i in select_data:
+						if(i==group_data):
+							sublist.append(row)
+
+						elif(i.startswith("sum")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							sum=0
+							for l in d[row]:
+								sum+=int(l[column_index])
+							sublist.append(sum)
+
+						elif(i.startswith("avg")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							sum=0
+							count=0
+							for l in d[row]:
+								sum+=int(l[column_index])
+								count+=1
+							if(count==0):
+								sublist.append("undefined")
+							else:
+								sublist.append(float(sum)/float(count))	
+
+						elif(i.startswith("min")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							min=0
+							for l in d[row]:
+								if(min>int(l[column_index])):
+									min=int(l[column_index])
+							sublist.append(min)	
+
+						elif(i.startswith("max")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							max=0
+							for l in d[row]:
+								if(max<int(l[column_index])):
+									max=int(l[column_index])
+							sublist.append(max)	
+
+						elif(i.startswith("count")):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							count=0
+							if(column_name=="*"):
+								for l in d[row]:
+									count+=1
+							else:
+								column_index=final_col_names.index(column_name)
+								for l in d[row]:
+									count+=1
+							sublist.append(count)	
+						else:
+							print("invalid query")
+
+					if "undefined" not in sublist:
+						if sublist not in QQ1:
+							QQ1.append(sublist)	
+		
+				for row in QQ1:
+					for i in row:
+						print(str(i).lower(),end=" ")
+					print()
 		else:
-			for row in select_data:
-				print(row, end=" ")
 			QQ1=[]
-			for row in d.keys():
-				sublist=[]
-				for i in select_data:
-					if(i==group_data):
-						sublist.append(row)
 
-					elif(i.startswith("sum")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-						sublist.append(sum)
-
-					elif(i.startswith("avg")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						count=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-							count+=1
-						if(count==0):
-							sublist.append("undefined")
-						else:
-							sublist.append(float(sum)/float(count))	
-
-					elif(i.startswith("min")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						min=0
-						for l in d[row]:
-							if(min>int(l[column_index])):
-								min=int(l[column_index])
-						sublist.append(min)	
-
-					elif(i.startswith("max")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						max=0
-						for l in d[row]:
-							if(max<int(l[column_index])):
-								max=int(l[column_index])
-						sublist.append(max)	
-
-					elif(i.startswith("count")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						count=0
-						if(column_name=="*"):
-							for l in d[row]:
-								count+=1
-						else:
+			for i in select_data:
+					sublist=[]
+					
+					for row in d.keys():
+						if i.startswith("sum"):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
 							column_index=final_col_names.index(column_name)
+							sum=0
 							for l in d[row]:
-								count+=1
-						sublist.append(count)	
-					else:
-						print("invalid query")
+								sum+=int(l[column_index])
+							sublist.append(sum)
 
-				if "undefined" not in sublist:
-					if sublist not in QQ1:
-						QQ1.append(sublist)	
-	
+						elif i.startswith("avg"):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							sum=0
+							count=0
+							for l in d[row]:
+								sum+=int(l[column_index])
+								count+=1
+							if(count==0):
+								sublist.append("undefined")
+							else:
+								sublist.append(float(sum)/float(count))	
+
+						elif i.startswith("min") :
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							min=0
+							for l in d[row]:
+								if(min>int(l[column_index])):
+									min=int(l[column_index])
+							sublist.append(min)	
+
+						elif i.startswith("max"):
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							column_index=final_col_names.index(column_name)
+							max=0
+							for l in d[row]:
+								if(max<int(l[column_index])):
+									max=int(l[column_index])
+							sublist.append(max)	
+
+
+						elif "count"==i[:5]:
+							i1=str(i).index("(")
+							i2=str(i).index(")")
+							column_name=str(i)[i1+1:i2]
+							count=0
+							if(column_name=="*"):
+								for l in d[row]:
+									count+=1
+							else:
+								column_index=final_col_names.index(column_name)
+								for l in d[row]:
+									count+=1
+							sublist.append(count)	
+						else:
+							print("Invalid query")
+					if "undefined" not in sublist:
+						if sublist not in QQ1:
+							QQ1.append(sublist)
 			for row in QQ1:
 				for i in row:
-					print(i,end=" ")
+					print(str(i).lower(),end=" ")
 				print()
-	else:
-		QQ1=[]
-		for row in d.keys():
-				sublist=[]
-				for i in select_data:
-					if(i.startswith("sum")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-						sublist.append(sum)
-
-					elif(i.startswith("avg")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						sum=0
-						count=0
-						for l in d[row]:
-							sum+=int(l[column_index])
-							count+=1
-						if(count==0):
-							sublist.append("undefined")
-						else:
-							sublist.append(float(sum)/float(count))	
-
-					elif(i.startswith("min")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						min=0
-						for l in d[row]:
-							if(min>int(l[column_index])):
-								min=int(l[column_index])
-						sublist.append(min)	
-
-					elif(i.startswith("max")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						column_index=final_col_names.index(column_name)
-						max=0
-						for l in d[row]:
-							if(max<int(l[column_index])):
-								max=int(l[column_index])
-						sublist.append(max)	
-
-					elif(i.startswith("count")):
-						i1=str(i).index("(")
-						i2=str(i).index(")")
-						column_name=str(i)[i1+1:i2]
-						count=0
-						if(column_name=="*"):
-							for l in d[row]:
-								count+=1
-						else:
-							column_index=final_col_names.index(column_name)
-							for l in d[row]:
-								count+=1
-						sublist.append(count)	
-					else:
-						print("Invalid query")
-				if "undefined" not in sublist:
-					if sublist not in QQ1:
-						QQ1.append(sublist)
-		for row in QQ1:
-			for i in row:
-				print(i,end=" ")
-			print()
-#except:
-#	print("Invalid Query")
+except:
+	print("Invalid Query********")
 
 print()
 print("******END OF QUERY OUTPUT********")
